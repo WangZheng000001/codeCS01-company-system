@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>公司预约页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        select {
+            width: 49%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>公司预约</h2>
+    <form id="reservationForm">
+        <label for="name">姓名</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="reason">事由</label>
+        <input type="text" id="reason" name="reason" required>
+
+        <label for="date">日期</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="time">时间</label>
+        <select id="time" name="time" required>
+            <option value="" disabled selected>请选择时间</option>
+            <!-- 使用 JavaScript 动态生成时间选项 -->
+        </select>
+
+        <label for="reason">您的邮箱</label>
+        <input type="text" id="eMail" name="eMail" required>
+
+        <button type="submit">预约确定</button>
+    </form>
+</div>
+<div id="messageDiv"></div>
+
+<script>
+    // 动态生成半小时时间选项
+        const timeSelect = document.getElementById("time");
+        const startTime = 9; // 9点
+        const endTime = 18; // 18点
+        for (let hour = startTime; hour <= endTime; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+                const option = document.createElement("option");
+                option.value = timeString;
+                option.textContent = timeString;
+                timeSelect.appendChild(option);
+            }
+        }
+
+    const messageDiv = document.getElementById('messageDiv');
+    const form = document.getElementById('reservationForm');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const data = {
+            name: "John",
+            reason: "Appointment",
+            date: "2023-08-28",
+            time: "09:00"
+        };
+        try {
+            const response = await fetch('/reserve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const resultDiv = document.createElement('div'); // 创建一个 <div> 元素
+            resultDiv.style.textAlign = 'center';
+            resultDiv.style.padding = '10px'; // 设置样式，可根据需要调整
+            resultDiv.style.border = '1px solid #ccc';
+            resultDiv.style.marginTop = '10px';
+            resultDiv.style.margin = 'center';
+            resultDiv.style.fontWeight = 'bold';
+            resultDiv.style.fontSize = '24px';
+
+            if (response.ok) {
+                resultDiv.textContent = "您的预约已提交，请在您的邮箱中确认日程";
+                resultDiv.style.color = 'green';
+            } else {
+                resultDiv.textContent = "您的提交未成功，请重试";
+                resultDiv.style.color = 'red';
+            }
+
+            document.body.innerHTML = ''; // 清空页面内容
+            document.body.appendChild(resultDiv);
+
+        } catch (error) {
+            console.error("发生错误，请重试", error);
+        }
+    });
+</script>
+</body>
+</html>

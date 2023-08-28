@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/companyre-reserve/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -8,13 +11,18 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="company-schedule" />
+        <module name="company-reserve" />
         <module name="company-business-cases" />
+        <module name="company-finance" />
         <module name="company-personnel" />
         <module name="company-business-transactions" />
         <module name="company-clients-partners" />
-        <module name="company-finance" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="archetype-resources" target="1.5" />
+      <module name="companyre-reserve" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -23,7 +31,9 @@
       <module name="company-clients-partners" options="-parameters" />
       <module name="company-finance" options="-parameters" />
       <module name="company-personnel" options="-parameters" />
+      <module name="company-reserve" options="-parameters" />
       <module name="company-schedule" options="-parameters" />
+      <module name="companyre-reserve" options="-parameters" />
     </option>
   </component>
 </project>
