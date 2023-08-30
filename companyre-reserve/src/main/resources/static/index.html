@@ -34,23 +34,23 @@
 <div class="container">
     <h2>公司预约</h2>
     <form id="reservationForm">
-        <label for="name">姓名</label>
-        <input type="text" id="name" name="name" required>
+        <label for="reserveName">姓名</label>
+        <input type="text" id="reserveName" name="reserveName" required>
 
-        <label for="reason">事由</label>
-        <input type="text" id="reason" name="reason" required>
+        <label for="reserveReason">事由</label>
+        <input type="text" id="reserveReason" name="reserveReason" required>
 
-        <label for="date">日期</label>
-        <input type="date" id="date" name="date" required>
+        <label for="reserveDate">日期</label>
+        <input type="date" id="reserveDate" name="reserveDate" required>
 
-        <label for="time">时间</label>
-        <select id="time" name="time" required>
+        <label for="reserveTime">时间</label>
+        <select id="reserveTime" name="reserveTime" required>
             <option value="" disabled selected>请选择时间</option>
             <!-- 使用 JavaScript 动态生成时间选项 -->
         </select>
 
-        <label for="reason">您的邮箱</label>
-        <input type="text" id="eMail" name="eMail" required>
+        <label for="reserveEmail">您的邮箱</label>
+        <input type="text" id="reserveEmail" name="reserveEmail" required>
 
         <button type="submit">预约确定</button>
     </form>
@@ -58,19 +58,59 @@
 <div id="messageDiv"></div>
 
 <script>
-    // 动态生成半小时时间选项
-        const timeSelect = document.getElementById("time");
-        const startTime = 9; // 9点
-        const endTime = 18; // 18点
-        for (let hour = startTime; hour <= endTime; hour++) {
-            for (let minute = 0; minute < 60; minute += 30) {
-                const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-                const option = document.createElement("option");
-                option.value = timeString;
-                option.textContent = timeString;
-                timeSelect.appendChild(option);
-            }
+    // ...
+
+    // Function to calculate the earliest and latest reserveDate options
+    function calculateDateRange() {
+        const now = new Date();
+        const hours = now.getHours();
+
+        // Calculate the minimum date
+        const minDate = new Date(now);
+        if (hours >= 12) {
+            minDate.setDate(minDate.getDate() + 2); // If it's after 12 PM, minimum date is the day after tomorrow
+        } else {
+            minDate.setDate(minDate.getDate() + 1); // If it's before 12 PM, minimum date is tomorrow
         }
+
+        // Calculate the maximum date (2 months from now)
+        const maxDate = new Date(now);
+        maxDate.setMonth(maxDate.getMonth() + 2);
+
+        return { minDate, maxDate };
+    }
+
+    // Function to update the reserveDate options based on the calculated date range
+    function updateDateOptions() {
+        const dateSelect = document.getElementById("reserveDate");
+        dateSelect.innerHTML = ""; // Clear existing options
+
+        const { minDate, maxDate } = calculateDateRange();
+
+        const options = [];
+        const currentDate = new Date(minDate);
+
+        while (currentDate <= maxDate) {
+            const dateString = currentDate.toISOString().split("T")[0];
+            const option = document.createElement("option");
+            option.value = dateString;
+            option.textContent = dateString;
+            options.push(option);
+
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Add the options to the select element
+        options.forEach((option) => {
+            dateSelect.appendChild(option);
+        });
+    }
+
+    // Initial update of the reserveDate options
+    updateDateOptions();
+
+    // Event listener to update reserveDate options when reserveDate changes
+    document.getElementById("reserveDate").addEventListener("change", updateDateOptions);
 
     const messageDiv = document.getElementById('messageDiv');
     const form = document.getElementById('reservationForm');
@@ -78,11 +118,13 @@
         event.preventDefault();
 
         const data = {
-            name: "John",
-            reason: "Appointment",
-            date: "2023-08-28",
-            time: "09:00"
+            reserveName: document.getElementById('reserveName').value,
+            reserveReason: document.getElementById('reserveReason').value,
+            reserveDate: document.getElementById('reserveDate').value,
+            reserveTime: document.getElementById('reserveTime').value,
+            reserveEmail: document.getElementById('reserveEmail').value
         };
+
         try {
             const response = await fetch('/reserve', {
                 method: 'POST',
@@ -97,20 +139,30 @@
             resultDiv.style.padding = '10px'; // 设置样式，可根据需要调整
             resultDiv.style.border = '1px solid #ccc';
             resultDiv.style.marginTop = '10px';
-            resultDiv.style.margin = 'center';
             resultDiv.style.fontWeight = 'bold';
             resultDiv.style.fontSize = '24px';
 
             if (response.ok) {
                 resultDiv.textContent = "您的预约已提交，请在您的邮箱中确认日程";
                 resultDiv.style.color = 'green';
+
+                // Hide the form upon successful submission
+                form.style.display = 'none';
             } else {
                 resultDiv.textContent = "您的提交未成功，请重试";
                 resultDiv.style.color = 'red';
             }
 
-            document.body.innerHTML = ''; // 清空页面内容
-            document.body.appendChild(resultDiv);
+            // Clear the form fields
+            document.getElementById('reserveName').value = '';
+            document.getElementById('reserveReason').value = '';
+            document.getElementById('reserveDate').value = '';
+            document.getElementById('reserveTime').value = '';
+            document.getElementById('reserveEmail').value = '';
+
+            // Append the resultDiv to the messageDiv
+            messageDiv.innerHTML = ''; // 清空消息区域
+            messageDiv.appendChild(resultDiv);
 
         } catch (error) {
             console.error("发生错误，请重试", error);

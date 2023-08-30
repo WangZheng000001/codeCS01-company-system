@@ -1,2 +1,22 @@
+#mybatis:
+#  type-aliases-package: com.seisoul.pojo
+#  mapperLocations: classpath:com/seisoul/mapper/*.xml
+#  configuration:
+#    map-underscore-to-camel-case: true
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.100/sql_companyre_reserve?useSSL=false
+    username: ZC1
+    password: zhengchuang1
+  thymeleaf:
+    prefix: classpath:/templates/    # 模板文件的前缀
+    suffix: .html                    # 模板文件的后缀
+    mode: HTML5                      # 模板模式，例如HTML5
+    encoding: UTF-8                  # 字符编码
+    cache: false                     # 是否启用模板缓存（开发阶段通常设置为false）
+    check-template-location: true     # 检查模板文件是否存在
 server:
   port: 8080
+
