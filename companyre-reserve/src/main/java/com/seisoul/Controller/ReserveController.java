@@ -25,13 +25,5 @@ public class ReserveController {
         // 返回响应，可以是成功或失败的消息
         return ResponseEntity.ok("预约已提交，请在您的邮箱中确认日程");
     }
-
-    /*@PostMapping(value = "/your-backend-endpoint")  *//* reserve   your-backend-endpoint*//*
-    public ResponseEntity<String> reserve(@ModelAttribute ReserveMessage reserveMessage){
-        int i = newReserve.addReserve(reserveMessage);
-        System.out.println(i);
-        System.out.println(reserveMessage);
-        return ResponseEntity.ok("回应成功");
-    }*/
 }
 

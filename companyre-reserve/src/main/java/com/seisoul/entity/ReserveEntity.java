@@ -59,18 +59,6 @@ public class ReserveEntity {
     public void setReserveEmail(String reserveEmail) {
         this.reserveEmail = reserveEmail;
     }
-
-    @Override
-    public String toString() {
-        return "ReserveMessage{" +
-                "reserveName='" + reserveName + '\'' +
-                ", reserveId=" + reserveId +
-                ", reserveReason='" + reserveReason + '\'' +
-                ", reserveDate=" + reserveDate +
-                ", reserveTime=" + reserveTime +
-                ", reserveEmail='" + reserveEmail + '\'' +
-                '}';
-    }
 }
 
 
