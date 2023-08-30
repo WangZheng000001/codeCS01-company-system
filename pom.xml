@@ -21,7 +21,7 @@
 		<module>company-schedule</module>
 		<module>company-clients-partners</module>
 		<module>company-business-transactions</module>
-        <module>companyre-reserve</module>
+        <module>company-reserve</module>
     </modules>
     <properties>
 		<java.version>17</java.version>
