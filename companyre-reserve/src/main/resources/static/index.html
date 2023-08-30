@@ -58,116 +58,98 @@
 <div id="messageDiv"></div>
 
 <script>
-    // ...
+    // 动态生成半小时时间选项
+const timeSelect = document.getElementById("reserveTime");
+const dateInput = document.getElementById("reserveDate");
+const form = document.getElementById('reservationForm');
+const messageDiv = document.getElementById('messageDiv');
 
-    // Function to calculate the earliest and latest reserveDate options
-    function calculateDateRange() {
-        const now = new Date();
-        const hours = now.getHours();
+const startTime = 9; // 9点
+const endTime = 18; // 18点
 
-        // Calculate the minimum date
-        const minDate = new Date(now);
-        if (hours >= 12) {
-            minDate.setDate(minDate.getDate() + 2); // If it's after 12 PM, minimum date is the day after tomorrow
-        } else {
-            minDate.setDate(minDate.getDate() + 1); // If it's before 12 PM, minimum date is tomorrow
+// 计算最早可选择的日期
+const today = new Date();
+const currentHour = today.getHours();
+
+// 根据当前时间计算最早可选的日期和时间范围
+if (currentHour < 12) {
+    // 当前时间在12点前，最早日期为当天，最早时间为当天的14:00
+    today.setHours(14);
+    today.setMinutes(0);
+    if (currentHour >= 14) {
+        today.setDate(today.getDate() + 1);
+    }
+} else {
+    // 当前时间在12点后，最早日期为第二天，最早时间为第二天的9:00
+    today.setDate(today.getDate() + 1);
+    today.setHours(9);
+    today.setMinutes(0);
+}
+
+// 设置日期输入的最小值和时间输入的选项
+dateInput.min = today.toISOString().slice(0, 10);
+
+for (let hour = startTime; hour <= endTime; hour++) {
+    const timeString = `${hour.toString().padStart(2, "0")}:00`;
+
+    if (currentHour < 12) {
+        // 当前时间在12点前，只能选择14:00到18:00
+        if (hour < 14) {
+            continue;
         }
-
-        // Calculate the maximum date (2 months from now)
-        const maxDate = new Date(now);
-        maxDate.setMonth(maxDate.getMonth() + 2);
-
-        return { minDate, maxDate };
     }
 
-    // Function to update the reserveDate options based on the calculated date range
-    function updateDateOptions() {
-        const dateSelect = document.getElementById("reserveDate");
-        dateSelect.innerHTML = ""; // Clear existing options
+    const option = document.createElement("option");
+    option.value = timeString;
+    option.textContent = timeString;
+    timeSelect.appendChild(option);
+}
 
-        const { minDate, maxDate } = calculateDateRange();
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-        const options = [];
-        const currentDate = new Date(minDate);
+    const data = {
+        reserveName: document.getElementById('reserveName').value,
+        reserveReason: document.getElementById('reserveReason').value,
+        reserveDate: document.getElementById('reserveDate').value,
+        reserveTime: document.getElementById('reserveTime').value,
+        reserveEmail: document.getElementById('reserveEmail').value
+    };
 
-        while (currentDate <= maxDate) {
-            const dateString = currentDate.toISOString().split("T")[0];
-            const option = document.createElement("option");
-            option.value = dateString;
-            option.textContent = dateString;
-            options.push(option);
-
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        // Add the options to the select element
-        options.forEach((option) => {
-            dateSelect.appendChild(option);
+    try {
+        const response = await fetch('/reserve', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
-    }
 
-    // Initial update of the reserveDate options
-    updateDateOptions();
+        if (response.ok) {
+            // 隐藏表单
+            form.style.display = 'none';
 
-    // Event listener to update reserveDate options when reserveDate changes
-    document.getElementById("reserveDate").addEventListener("change", updateDateOptions);
-
-    const messageDiv = document.getElementById('messageDiv');
-    const form = document.getElementById('reservationForm');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const data = {
-            reserveName: document.getElementById('reserveName').value,
-            reserveReason: document.getElementById('reserveReason').value,
-            reserveDate: document.getElementById('reserveDate').value,
-            reserveTime: document.getElementById('reserveTime').value,
-            reserveEmail: document.getElementById('reserveEmail').value
-        };
-
-        try {
-            const response = await fetch('/reserve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const resultDiv = document.createElement('div'); // 创建一个 <div> 元素
+            const resultDiv = document.createElement('div');
             resultDiv.style.textAlign = 'center';
-            resultDiv.style.padding = '10px'; // 设置样式，可根据需要调整
+            resultDiv.style.padding = '10px';
             resultDiv.style.border = '1px solid #ccc';
             resultDiv.style.marginTop = '10px';
             resultDiv.style.fontWeight = 'bold';
             resultDiv.style.fontSize = '24px';
+            resultDiv.textContent = "您的预约已提交，请在您的邮箱中确认日程";
+            resultDiv.style.color = 'green';
 
-            if (response.ok) {
-                resultDiv.textContent = "您的预约已提交，请在您的邮箱中确认日程";
-                resultDiv.style.color = 'green';
-
-                // Hide the form upon successful submission
-                form.style.display = 'none';
-            } else {
-                resultDiv.textContent = "您的提交未成功，请重试";
-                resultDiv.style.color = 'red';
-            }
-
-            // Clear the form fields
-            document.getElementById('reserveName').value = '';
-            document.getElementById('reserveReason').value = '';
-            document.getElementById('reserveDate').value = '';
-            document.getElementById('reserveTime').value = '';
-            document.getElementById('reserveEmail').value = '';
-
-            // Append the resultDiv to the messageDiv
-            messageDiv.innerHTML = ''; // 清空消息区域
+            messageDiv.innerHTML = '';
             messageDiv.appendChild(resultDiv);
-
-        } catch (error) {
-            console.error("发生错误，请重试", error);
+        } else {
+            throw new Error("预约提交未成功");
         }
-    });
+
+    } catch (error) {
+        console.error("发生错误，请重试", error);
+    }
+});
+
 </script>
 </body>
 </html>
