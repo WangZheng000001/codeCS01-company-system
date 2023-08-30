@@ -129,6 +129,10 @@ form.addEventListener('submit', async (event) => {
             // 隐藏表单
             form.style.display = 'none';
 
+            // 隐藏标题
+            document.querySelector('h2').style.display = 'none';
+
+
             const resultDiv = document.createElement('div');
             resultDiv.style.textAlign = 'center';
             resultDiv.style.padding = '10px';
@@ -153,3 +157,4 @@ form.addEventListener('submit', async (event) => {
 </script>
 </body>
 </html>
+

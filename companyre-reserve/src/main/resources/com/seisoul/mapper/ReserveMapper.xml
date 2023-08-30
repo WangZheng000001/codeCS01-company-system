@@ -2,7 +2,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.seisoul.mapper.ReserveMapper">
-    <insert id="addReserve" parameterType="com.seisoul.entity.ReserveMessage" useGeneratedKeys="true" keyProperty="reserveId">
+    <insert id="addReserve" parameterType="com.seisoul.entity.ReserveEntity" useGeneratedKeys="true" keyProperty="reserveId">
         INSERT INTO tb_reserve(`reserve_name`, `reserve_reason`, `reserve_date`, `reserve_time`, `reserve_email`)
         VALUES(#{reserveName}, #{reserveReason}, #{reserveDate}, #{reserveTime}, #{reserveEmail})
     </insert>

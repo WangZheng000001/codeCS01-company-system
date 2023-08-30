@@ -3,7 +3,7 @@ package com.seisoul.entity;
 import java.sql.Date;
 import java.time.LocalTime;
 
-public class ReserveMessage {
+public class ReserveEntity {
 
    private String reserveName;
    private Integer reserveId;
@@ -72,3 +72,5 @@ public class ReserveMessage {
                 '}';
     }
 }
+
+
