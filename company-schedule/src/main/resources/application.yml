@@ -1,2 +1,6 @@
+# this is application.yml file of company-schedule module
+
+
+# tomcat web server configurations
 server:
-  port: 8081
+  port: 8080
