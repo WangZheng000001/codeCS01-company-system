@@ -3,16 +3,18 @@ package com.seisoul.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 这个文件是实体类_统一返回对象.
- * 用来返回给html页面的只能是该实体类
+ * <p>用来返回给html页面的只能是该实体类</p>
  *
  * @author yoshigawashimizu
  * @version 1.0
  * @date 2023-08-31 18:06:52
  */
 @Data
+@Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResultEntity {
